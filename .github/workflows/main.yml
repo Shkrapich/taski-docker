@@ -3,7 +3,7 @@ name: Main Taski workflow
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   tests:
@@ -51,7 +51,7 @@ jobs:
         python -m flake8 backend/
         cd backend/
         python manage.py test
-
+  # Добавляем новую задачу: деплой приложения
   build_and_push_to_docker_hub:
     name: Push Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -70,8 +70,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          # Хорошо ли держать логин и пароль прямо в коде workflow?
-          # Нет, это нехорошо
       - name: Push to DockerHub
         # Одновременный билд и пуш образа в Docker Hub
         uses: docker/build-push-action@v4
@@ -86,4 +84,4 @@ jobs:
           # Для каждого пересобранного образа 
           # устанавливаем тег latest, чтобы потом
           # на сервере и в docker-compose.yml не указывать версию
-          tags: shkrapich/taski_backend:latest 
+          tags: xadr69/taski_backend:latest
