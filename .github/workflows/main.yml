@@ -3,7 +3,7 @@ name: Main Taski workflow
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   tests:
@@ -146,7 +146,7 @@ jobs:
         with:
           context: ./gateway/
           push: true
-          tags: shkrapich/taski_gateway:lates
+          tags: shkrapich/taski_gateway:latest
   deploy:
     runs-on: ubuntu-latest
     needs: 
@@ -176,7 +176,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         # Параметр script передаёт в action appleboy/ssh-action команды,
-        # которые нужно выполнить на сервере, 
+        # которые нужно выполнить на сервере,
         # с которым установлено соединение
         script: |
           cd taski
@@ -188,4 +188,14 @@ jobs:
           # Выполняет миграции и сбор статики
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/         
+          sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+  send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: Send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Деплой успешно выполнен!         
