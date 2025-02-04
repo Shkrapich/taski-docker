@@ -1,4 +1,0 @@
-
-"""
-    This class represents a ...
-"""

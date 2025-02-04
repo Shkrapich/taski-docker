@@ -1,4 +1,3 @@
-"""This is the init file for the api package."""
 from django.contrib import admin
 
 from .models import Task
